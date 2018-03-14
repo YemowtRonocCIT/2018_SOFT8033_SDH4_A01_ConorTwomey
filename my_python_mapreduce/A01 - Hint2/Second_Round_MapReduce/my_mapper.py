@@ -15,11 +15,54 @@
 import sys
 import codecs
 
+
+def extract_language_and_project(string, split_char):
+
+    if split_char in string:
+        split_index = string.find(split_char)
+        language = string[:split_index]
+        project = string[split_index + 1:]
+    else:
+        language = string
+        project = 'wikipedia'
+
+    return language, project
+
+def extract_view_count(words):
+    VIEW_INDEX = 2
+    word = words[VIEW_INDEX]
+    views = 0
+
+    if word.isdigit():
+        views = int(word)
+    else:
+        list = [int(s) for s in words if s.isdigit()]
+        views = list[0]
+
+    return views
+
 # ------------------------------------------
 # FUNCTION my_map
 # ------------------------------------------
 def my_map(input_stream, per_language_or_project, output_stream):
-    pass
+    using_language = per_language_or_project
+
+    results = {}
+    for line in input_stream:
+        words = line.split()
+        language, project = extract_language_and_project(words[0], '.')
+        view_count = extract_view_count(words)
+        if using_language == True:
+            if language not in results:
+                results[language] = 0
+            results[language] += view_count
+        else:
+            if project not in results:
+                results[project] = 0
+            results[project] += view_count
+
+    for key, value in results.items():
+        output_stream.write("%s\t%s\n" % (key, value))
 
 # ------------------------------------------
 # FUNCTION my_main
@@ -50,10 +93,14 @@ if __name__ == '__main__':
     # 1. Input parameters
     debug = True
 
-    i_file_name = "pageviews-20180219-100000_0.txt"
-    o_file_name = "mapResult.txt"
+    i_file_name = "../../../my_dataset/pageviews-20180219-100000_0.txt"
 
     per_language_or_project = True # True for language and False for project
+    if per_language_or_project:
+        o_file_name = "../../../my_result/A01 - Hint2/Second_Round_MapReduce/Per Language/mapResult.txt"
+    else:
+
+        o_file_name = "../../../my_result/A01 - Hint2/Second_Round_MapReduce/Per Project/mapResult.txt"
 
     # 2. Call to the function
     my_main(debug, i_file_name, o_file_name, per_language_or_project)
