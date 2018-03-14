@@ -19,6 +19,14 @@ import codecs
 # FUNCTION my_reduce
 # ------------------------------------------
 def my_reduce(input_stream, output_stream):
+    word_count = 0
+    for line in input_stream:
+        words = line.split()
+        for index, word in enumerate(words):
+            if index == 1:
+                word_count += int(word)
+
+    output_stream.write("num_words\t%s\n" % (word_count))
     pass
 
 # ------------------------------------------
@@ -50,7 +58,7 @@ if __name__ == '__main__':
     # 1. Input parameters
     debug = True
 
-    i_file_name = "sort_simulation.txt"
-    o_file_name = "reduce_simulation.txt"
+    i_file_name = "../../../my_result/A01 - Hint2/First_Round_MapReduce/sort_simulation.txt"
+    o_file_name = "../../../my_result/A01 - Hint2/First_Round_MapReduce/reduce_simulation.txt"
 
     my_main(debug, i_file_name, o_file_name)
