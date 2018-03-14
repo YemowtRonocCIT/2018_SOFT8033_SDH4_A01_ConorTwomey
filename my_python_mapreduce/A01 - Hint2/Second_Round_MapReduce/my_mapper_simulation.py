@@ -114,7 +114,7 @@ def simulating_my_map(directory, extension, output_stream, per_language_or_proje
 def my_main(ext, o_file_name, per_language_or_project):
     # 1. Set the directory
     current_dir = os.getcwd()
-    dataset_dir = "C://Users//Ignacio.Castineiras//Desktop//Big Data Analytics//4. Assignments//A01_to_students//my_dataset//"
+    dataset_dir = "../../../my_dataset/"
 
     # 2. We open the file for writing
     output_file = codecs.open(o_file_name, "w", encoding='utf-8')
@@ -136,8 +136,13 @@ if __name__ == '__main__':
     # 1. Input parameters
     ext = "txt"
 
-    o_file_name = "map_simulation.txt"
-    per_language_or_project = True # True for language and False for project
+
+    per_language_or_project = False # True for language and False for project
+    if per_language_or_project:
+        o_file_name = "../../../my_result/A01 - Hint2/Second_Round_MapReduce/Per Language/map_simulation.txt"
+    else:
+        o_file_name = "../../../my_result/A01 - Hint2/Second_Round_MapReduce/Per Project/map_simulation.txt"
+
 
     # 2. Call to the function
     my_main(ext, o_file_name, per_language_or_project)
