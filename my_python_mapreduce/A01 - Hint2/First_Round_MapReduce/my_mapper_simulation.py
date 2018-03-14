@@ -88,7 +88,7 @@ def simulating_my_map(directory, extension, output_stream):
 # ------------------------------------------
 def my_main(ext, o_file_name):
     # 1. Set the directory
-    dataset_dir = "C://Users//Ignacio.Castineiras//Desktop//Big Data Analytics//4. Assignments//A01_to_students//my_dataset//"
+    dataset_dir = "../../../my_dataset/"
     # 2. We open the file for writing
     output_file = codecs.open(o_file_name, "w", encoding='utf-8')
 
@@ -109,7 +109,7 @@ if __name__ == '__main__':
     # 1. Input parameters
     ext = "txt"
 
-    o_file_name = "map_simulation.txt"
+    o_file_name = "../../../my_result/A01 - Hint2/First_Round_MapReduce/map_simulation.txt"
 
     # 2. Call to the function
     my_main(ext, o_file_name)
