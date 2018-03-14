@@ -17,12 +17,73 @@ import codecs
 
 
 
+def output_mapper(language_dict, output_stream, num_top_entries):
+    for language in language_dict:
+        # processing_list = sorted(language_dict[language], reverse=True)
+        processing_list = language_dict[language]
+        for index, element in enumerate(processing_list):
+            output_stream.write("%s (%s,\t%s)\n" % (language, element[1], element[0]))
+            if index == num_top_entries - 1:
+                break
+
+def sort_dictionary(language_dict, num_top_entries):
+    for language in language_dict:
+        if len(language_dict) > num_top_entries:
+            processing_list = sorted(language_dict[language], reverse=True)
+            print(processing_list)
+            processing_list = processing_list[:num_top_entries]
+            language_dict[language] = processing_list
+
+    return language_dict
+
+def add_line_to_tuple(line, projects, languages, num_top_entries):
+    LANGUAGE_INDEX = 0
+    ARTICLE_INDEX = 1
+    VIEW_INDEX = 2
+
+    project = ""
+    article = ""
+    featured_language = False
+    for index, word in enumerate(line.split()):
+
+        if index == LANGUAGE_INDEX:
+            for language in languages:
+                if word.startswith(language):
+                    featured_language = True
+            # This prevents languages that aren't included
+            # from being added to the job
+            if not featured_language:
+                break
+
+            project = word
+            if word not in projects:
+                projects[word] = []
+
+        if index == ARTICLE_INDEX:
+            article = word
+
+        if index == VIEW_INDEX:
+            view_count = int(word)
+            current_tuple = (view_count, article)
+            projects[project].append(current_tuple)
+            projects[project] = sorted(projects[project], reverse=True)
+            if len(projects[project]) > num_top_entries:
+                projects[project] = projects[project][:num_top_entries]
+
+    return projects
+
 
 # ------------------------------------------
 # FUNCTION my_map
 # ------------------------------------------
 def my_map(input_stream, languages, num_top_entries, output_stream):
-    pass
+    projects = {}
+
+    for line in input_stream:
+        # line is type 'str', each individual line
+        projects = add_line_to_tuple(line, projects, languages, num_top_entries)
+
+    output_mapper(projects, output_stream, num_top_entries)
 
 # ------------------------------------------
 # FUNCTION my_main
@@ -53,8 +114,8 @@ if __name__ == '__main__':
     # 1. Input parameters
     debug = True
 
-    i_file_name = "pageviews-20180219-100000_0.txt"
-    o_file_name = "mapResult.txt"
+    i_file_name = "../../my_dataset/pageviews-20180219-100000_0.txt"
+    o_file_name = "../../my_result/A01 - Hint1/mapResult.txt"
 
     languages = ["en", "es", "fr"]
     num_top_entries = 5
