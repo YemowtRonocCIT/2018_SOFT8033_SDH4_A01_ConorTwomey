@@ -15,11 +15,63 @@
 import sys
 import codecs
 
+def extract_total_view_count(input_stream, total_petitions):
+    PETITION_INDEX = 0
+    VIEW_INDEX = 1
+
+    total_view_count = {}
+    previous_petition = None
+
+    for line in input_stream:
+        if line:
+            words = line.split()
+            petition_type = words[PETITION_INDEX]
+            view_count = int(words[VIEW_INDEX])
+
+            if petition_type == previous_petition:
+                total_view_count[petition_type] += view_count
+            else:
+                if previous_petition != None:
+                    percentage = (total_view_count[previous_petition] / total_petitions) * 100
+                    total_view_count[previous_petition] = (total_view_count[previous_petition], percentage)
+                previous_petition = petition_type
+                total_view_count[petition_type] = view_count
+
+    percentage = (total_view_count[previous_petition] / total_petitions) * 100
+    total_view_count[previous_petition] = (total_view_count[previous_petition], percentage)
+
+    return total_view_count
+
+def order_input_by_popularity(total_view_count):
+    VIEW_INDEX = 0
+    PERCENT_INDEX = 1
+
+    ordered_items = []
+
+    for key, value in total_view_count.items():
+        views = value[VIEW_INDEX]
+        percentage = value[PERCENT_INDEX]
+        current_tuple = (views, percentage, key)
+        ordered_items.append(current_tuple)
+
+    ordered_items.sort(reverse=True)
+    return ordered_items
+
+def output_items(ordered_items, output_stream):
+    for next_items in ordered_items:
+        views = next_items[0]
+        percentage = next_items[1]
+        language = next_items[2]
+        output_stream.write("%s\t(%s, %s%%)\n" % (language, views, percentage))
+
+
 # ------------------------------------------
 # FUNCTION my_reduce
 # ------------------------------------------
 def my_reduce(input_stream, total_petitions, output_stream):
-    pass
+    total_view_count = extract_total_view_count(input_stream, total_petitions)
+    ordered_items = order_input_by_popularity(total_view_count)
+    output_items(ordered_items, output_stream)
 
 # ------------------------------------------
 # FUNCTION my_main
@@ -51,9 +103,9 @@ if __name__ == '__main__':
     debug = True
 
     # This variable must be computed in the first stage
-    total_petitions = ???
+    total_petitions = 21996631
 
-    i_file_name = "sort_simulation.txt"
-    o_file_name = "reduce_simulation.txt"
+    i_file_name = "../../../my_result/A01 - Hint2/Second_Round_MapReduce/sort_simulation.txt"
+    o_file_name = "../../../my_result/A01 - Hint2/Second_Round_MapReduce/reduce_simulation.txt"
 
     my_main(debug, i_file_name, total_petitions, o_file_name)
