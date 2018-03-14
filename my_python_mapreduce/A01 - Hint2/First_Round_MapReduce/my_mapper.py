@@ -15,10 +15,28 @@
 import codecs
 import sys
 
+
+
 # ------------------------------------------
 # FUNCTION my_map
 # ------------------------------------------
 def my_map(input_stream, output_stream):
+    word_count = 0
+
+    found_number =  False
+    for line in input_stream:
+        words = line.split()
+        for index, word in enumerate(words):
+            if index == 2:
+                if word.isdigit():
+                    word_count += int(word)
+                    found_number = True
+                else:
+                    list = [int(s) for s in line.split() if s.isdigit()]
+                    word_count += list[0]
+
+
+    output_stream.write("num_words\t%s\n" % (word_count))
     pass
 
 # ------------------------------------------
@@ -50,8 +68,8 @@ if __name__ == '__main__':
     # 1. Input parameters
     debug = True
 
-    i_file_name = "pageviews-20180219-100000_1.txt"
-    o_file_name = "mapResult.txt"
+    i_file_name = "../../../my_dataset/pageviews-20180219-100000_1.txt"
+    o_file_name = "../../../my_result/A01 - Hint2/First_Round_MapReduce/mapResult.txt"
 
     # 2. Call to the function
     my_main(debug, i_file_name, o_file_name)
