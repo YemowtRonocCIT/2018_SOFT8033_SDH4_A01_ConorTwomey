@@ -114,7 +114,7 @@ def simulating_my_map(directory, extension, output_stream, languages, num_top_en
 def my_main(ext, o_file_name, languages, num_top_entries):
     # 1. Set the directory
     current_dir = os.getcwd()
-    dataset_dir = get_parent_directory(current_dir) + "\\my_dataset"
+    dataset_dir = get_parent_directory(get_parent_directory(current_dir)) + "\\my_dataset"
 
     # 2. We open the file for writing
     output_file = codecs.open(o_file_name, "w", encoding='utf-8')
@@ -135,7 +135,7 @@ def my_main(ext, o_file_name, languages, num_top_entries):
 if __name__ == '__main__':
     # 1. Input parameters
     ext = "txt"
-    o_file_name = "map_simulation.txt"
+    o_file_name = "../../my_result/A01 - Hint1/map_simulation.txt"
     languages = ["en", "es", "fr"]
     num_top_entries = 5
 
