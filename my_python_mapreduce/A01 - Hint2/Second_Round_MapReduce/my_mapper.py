@@ -16,7 +16,7 @@ import sys
 import codecs
 
 
-def extract_language_and_project(string, split_char):
+def split_by_char(string, split_char):
 
     if split_char in string:
         split_index = string.find(split_char)
@@ -45,21 +45,30 @@ def extract_view_count(words):
 # FUNCTION my_map
 # ------------------------------------------
 def my_map(input_stream, per_language_or_project, output_stream):
+    SPLIT_CHAR = '.'
     using_language = per_language_or_project
 
     results = {}
     for line in input_stream:
         words = line.split()
-        language, project = extract_language_and_project(words[0], '.')
+        language, project = split_by_char(words[0], SPLIT_CHAR)
         view_count = extract_view_count(words)
         if using_language == True:
             if language not in results:
                 results[language] = 0
             results[language] += view_count
         else:
-            if project not in results:
-                results[project] = 0
-            results[project] += view_count
+
+            projects = [project]
+            for project in projects:
+                if SPLIT_CHAR in project:
+                    first_project, second_project = split_by_char(project, SPLIT_CHAR)
+                    projects = [first_project, second_project]
+
+            for project in projects:
+                if project not in results:
+                    results[project] = 0
+                results[project] += view_count
 
     for key, value in results.items():
         output_stream.write("%s\t%s\n" % (key, value))
@@ -95,7 +104,7 @@ if __name__ == '__main__':
 
     i_file_name = "../../../my_dataset/pageviews-20180219-100000_0.txt"
 
-    per_language_or_project = True # True for language and False for project
+    per_language_or_project = False # True for language and False for project
     if per_language_or_project:
         o_file_name = "../../../my_result/A01 - Hint2/Second_Round_MapReduce/Per Language/mapResult.txt"
     else:
