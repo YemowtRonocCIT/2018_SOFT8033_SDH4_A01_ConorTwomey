@@ -136,13 +136,8 @@ if __name__ == '__main__':
     # 1. Input parameters
     ext = "txt"
 
-
     per_language_or_project = False # True for language and False for project
-    if per_language_or_project:
-        o_file_name = "../../../my_result/A01 - Hint2/Second_Round_MapReduce/Per Language/map_simulation.txt"
-    else:
-        o_file_name = "../../../my_result/A01 - Hint2/Second_Round_MapReduce/Per Project/map_simulation.txt"
-
+    o_file_name = "../../../my_result/A01 - Hint2/Second_Round_MapReduce/map_simulation.txt"
 
     # 2. Call to the function
     my_main(ext, o_file_name, per_language_or_project)
