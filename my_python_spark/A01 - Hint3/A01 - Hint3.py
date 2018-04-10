@@ -19,8 +19,13 @@ import codecs
 # ------------------------------------------
 def process_line(line, languages):
     # 1. We create the variable to output
+    LANGUAGE_INDEX = 0
+    ARTICLE_INDEX = 1
+    VIEW_INDEX = 2
+    STANDARD_WORD_COUNT = 4
+
     res = ()
-    proj_name = ''
+    language = ''
     page_info = ()
 
     # 2. We clean the line
@@ -32,22 +37,22 @@ def process_line(line, languages):
     words = line.split(" ")
 
     # 4. We filter any non-valid entry having a wrong length
-    if (len(words) == 4):
+    if (len(words) == STANDARD_WORD_COUNT):
         # 4.1. If the line is a Wikipedia project for a valid language, then we keep it
         if line_is_language(line, languages):
-            proj_name = words[0]
+            language = words[LANGUAGE_INDEX]
 
     # 5. For valid entries, we compute the rest of the info
-    if (proj_name != ''):
+    if (language != ''):
         # 5.1. We ensure that the page name does not have some commas
-        if ',' in words[1]:
-            words[1] = words[1].replace(',', ':')
+        if ',' in words[ARTICLE_INDEX]:
+            words[ARTICLE_INDEX] = words[ARTICLE_INDEX].replace(',', ':')
 
         # 5.2. We assign page_info to the right information
-        page_info = (int(words[2]), words[1])
+        page_info = (int(words[VIEW_INDEX]), words[ARTICLE_INDEX])
 
     # 6. We assign res properly and return res
-    res = (proj_name, page_info)
+    res = (language, page_info)
     return res
 
 
@@ -75,10 +80,11 @@ def initialise_list(first_tuple, num_top_entries):
 
 
 def add_new_tuple_to_list(tuple_list, new_value):
+    VIEW_COUNT_INDEX = 0
     length = len(tuple_list)
 
     for tup in tuple_list:
-        if tup[0] < new_value[0]:
+        if tup[VIEW_COUNT_INDEX] < new_value[VIEW_COUNT_INDEX]:
             tuple_list.append(new_value)
             break
 
