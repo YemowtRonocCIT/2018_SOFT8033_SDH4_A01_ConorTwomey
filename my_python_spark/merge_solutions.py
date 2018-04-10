@@ -65,5 +65,5 @@ if __name__ == '__main__':
     # 2. If we run it via Pycharm
     else:
         sol_name = "solution.txt"
-        dir = "C://Users//Ignacio.Castineiras//Desktop//Big Data Analytics//4. Assignments//A01_solved//my_result//A01 - Hint3//"
+        dir = "./my_result/A01 - Hint3/"
         my_main(sol_name, dir)
