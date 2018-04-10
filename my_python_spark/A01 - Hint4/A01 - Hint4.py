@@ -13,6 +13,88 @@
 import sys
 import codecs
 
+
+def split_identifier(language_project, per_language_or_project):
+    identifier = ''
+
+    split_index = language_project.find('.')
+    if split_index != -1:
+        if per_language_or_project == True:
+            identifier = language_project[:split_index]
+        else:
+            identifier = language_project[split_index + 1:]
+    else:
+        if per_language_or_project != True:
+            identifier = 'Wikipedia'
+
+    return identifier
+
+
+def process_line(line, per_language_or_project):
+    CORRECT_WORD_COUNT = 4
+    LANGUAGE_PROJECT_INDEX = 0
+    ARTICLE_INDEX = 1
+    VIEW_INDEX = 2
+
+    result = ('', 0)
+
+    identifiers = []
+
+    words = line.split()
+    language_project = words[LANGUAGE_PROJECT_INDEX]
+    article = words[ARTICLE_INDEX]
+
+    if len(words) == CORRECT_WORD_COUNT:
+        views = int(words[VIEW_INDEX])
+
+    else:
+        for word in words:
+            if word.isdigit():
+                if int(word) != 0:
+                    views = int(word)
+                    break
+
+    first_identifier = split_identifier(language_project, per_language_or_project)
+    result = (first_identifier, views)
+
+    return result
+
+
+def remove_blanks(count_tuple):
+    IDENTIFIER_INDEX = 0
+    COUNT_INDEX = 1
+
+    valid = False
+
+    identifier = count_tuple[IDENTIFIER_INDEX]
+    count = count_tuple[COUNT_INDEX]
+
+    if count != 0 and identifier != '':
+        valid = True
+
+    return valid
+
+
+def back_to_line(count_tuple, totalCount):
+    identifier = count_tuple[0]
+    count = count_tuple[1]
+    line = ''
+
+    if count != 0:
+        percent = (float(count) / float(totalCount)) * 100
+        line = '(%s, %s, %s%%)' % (identifier, count, percent)
+
+    return line
+
+
+def just_numbers(count_tuple):
+    VIEW_COUNT_INDEX = 1
+
+    count = count_tuple[VIEW_COUNT_INDEX]
+
+    return count
+
+
 # ------------------------------------------
 # FUNCTION my_main
 # ------------------------------------------
@@ -20,7 +102,27 @@ def my_main(dataset_dir, o_file_dir, per_language_or_project):
     # 1. We remove the solution directory, to rewrite into it
     dbutils.fs.rm(o_file_dir, True)
 
-	# Complete the Spark Job
+    # Complete the Spark Job
+    # *.txt to use all files
+    # pageviews-20180219-100000_0 for first file
+    inputRDD = sc.textFile("%s/*.txt" % dataset_dir)
+
+    dividedRDD = inputRDD.map(lambda line: process_line(line, per_language_or_project)).filter(remove_blanks)
+    dividedRDD.persist()
+
+    combinedRDD = dividedRDD.combineByKey(lambda count_value: count_value,
+                                          lambda count_accumulator, new_value: count_accumulator + new_value,
+                                          lambda first_accumulator,
+                                                 second_accumulator: first_accumulator + second_accumulator)
+
+    totalCountRDD = dividedRDD.map(just_numbers)
+    totalCount = totalCountRDD.reduce(lambda x, y: x + y)
+
+    linedRDD = combinedRDD.map(lambda tup: back_to_line(tup, totalCount))
+    linedRDD.saveAsTextFile(o_file_dir)
+
+    print(linedRDD.take(20))
+
 
 # ---------------------------------------------------------------
 #           PYTHON EXECUTION
@@ -33,6 +135,6 @@ if __name__ == '__main__':
     dataset_dir = "/FileStore/tables/A01_my_dataset/"
     o_file_dir = "/FileStore/tables/A01_my_result/"
 
-    per_language_or_project = True  # True for language and False for project
+    per_language_or_project = False  # True for language and False for project
 
     my_main(dataset_dir, o_file_dir, per_language_or_project)
