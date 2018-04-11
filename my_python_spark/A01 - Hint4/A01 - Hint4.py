@@ -129,21 +129,15 @@ def lines_to_tuples(lines):
 # FUNCTION my_main
 # ------------------------------------------
 def my_main(dataset_dir, o_file_dir, per_language_or_project):
-    SAMPLE_SIZE = 20
     # 1. We remove the solution directory, to rewrite into it
     dbutils.fs.rm(o_file_dir, True)
 
     # Complete the Spark Job
-    # *.txt to use all files
-    # pageviews-20180219-100000_0 for first file
     inputRDD = sc.textFile("%s/*.txt" % dataset_dir)
 
     dividedRDD = inputRDD.map(lambda line: process_line(line, per_language_or_project))
-    #     print("First Map: %s" % (dividedRDD.take(SAMPLE_SIZE)))
     dividedRDD = dividedRDD.map(list_to_lines)
-    #     print("Second Map: %s" % (dividedRDD.take(SAMPLE_SIZE)))
     dividedRDD = dividedRDD.map(lines_to_tuples)
-    #     print("Third Map: %s" % (dividedRDD.take(SAMPLE_SIZE)))
     dividedRDD = dividedRDD.filter(remove_blanks)
     dividedRDD.persist()
 
@@ -151,17 +145,12 @@ def my_main(dataset_dir, o_file_dir, per_language_or_project):
                                           lambda count_value, new_value: count_value + new_value,
                                           lambda first_accumulator,
                                                  second_accumulator: first_accumulator + second_accumulator)
-    #     print("CombineByKey: %s" % combinedRDD.take(SAMPLE_SIZE))
 
     totalCountRDD = dividedRDD.map(just_numbers)
     totalCount = totalCountRDD.reduce(lambda x, y: x + y)
-    #     print("Total count: %s" % totalCount)
 
     linedRDD = combinedRDD.map(lambda tup: back_to_line(tup, totalCount))
     linedRDD.saveAsTextFile(o_file_dir)
-
-
-#     print("Final Result: %s" % linedRDD.take(SAMPLE_SIZE))
 
 
 # ---------------------------------------------------------------
