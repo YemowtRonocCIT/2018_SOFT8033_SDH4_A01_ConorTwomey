@@ -37,12 +37,10 @@ def split_identifier(language_project, per_language_or_project):
 def process_line(line, per_language_or_project):
     CORRECT_WORD_COUNT = 4
     LANGUAGE_PROJECT_INDEX = 0
-    ARTICLE_INDEX = 1
     VIEW_INDEX = 2
 
     words = line.split()
     language_project = words[LANGUAGE_PROJECT_INDEX]
-    article = words[ARTICLE_INDEX]
 
     if len(words) == CORRECT_WORD_COUNT:
         views = int(words[VIEW_INDEX])
@@ -76,10 +74,12 @@ def remove_blanks(count_tuple):
     return valid
 
 def back_to_line(count_tuple, totalCount):
+    IDENTIFIER_INDEX = 0
+    VIEW_COUNT_INDEX = 1
     line = ''
 
-    identifier = count_tuple[0]
-    count = count_tuple[1]
+    identifier = count_tuple[IDENTIFIER_INDEX]
+    count = count_tuple[VIEW_COUNT_INDEX]
 
     if count != 0:
         percent = (float(count) / float(totalCount)) * 100
@@ -96,22 +96,26 @@ def just_numbers(count_tuple):
     return count
 
 def list_to_lines(tuple_list):
+    IDENTIFIER_INDEX = 0
+    VIEW_COUNT_INDEX = 1
     line = ''
     for tupl in tuple_list:
-        line += '(%s, %s)\t' % (tupl[0], tupl[1])
+        line += '(%s, %s)\t' % (tupl[IDENTIFIER_INDEX], tupl[VIEW_COUNT_INDEX])
 
     return line
 
 def lines_to_tuples(lines):
+    IDENTIFIER_INDEX = 0
+    VIEW_COUNT_INDEX = 1
     # Remove the brackets on either end
     for line in lines.split('\t'):
         line = line[1:len(line) - 1]
 
         words = line.split()
 
-        article = words[0]
+        article = words[IDENTIFIER_INDEX]
         if article != '(,':
-            count = int(words[1])
+            count = int(words[VIEW_COUNT_INDEX])
 
             article = article[:len(article) - 1]
 
