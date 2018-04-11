@@ -23,6 +23,9 @@ def split_identifier(language_project, per_language_or_project):
             identifier = language_project[:split_index]
         else:
             identifier = language_project[split_index + 1:]
+            if '.' in identifier:
+                split_index = identifier.find('.')
+                identifier = identifier[:split_index]
     else:
         if per_language_or_project != True:
             identifier = 'Wikipedia'
@@ -38,10 +41,6 @@ def process_line(line, per_language_or_project):
     ARTICLE_INDEX = 1
     VIEW_INDEX = 2
 
-    result = ('', 0)
-
-    identifiers = []
-
     words = line.split()
     language_project = words[LANGUAGE_PROJECT_INDEX]
     article = words[ARTICLE_INDEX]
@@ -56,8 +55,10 @@ def process_line(line, per_language_or_project):
                     views = int(word)
                     break
 
-    first_identifier = split_identifier(language_project, per_language_or_project)
-    result = [(first_identifier, views)]
+    result = []
+
+    identifier = split_identifier(language_project, per_language_or_project)
+    result.append((identifier, views))
 
     return result
 
