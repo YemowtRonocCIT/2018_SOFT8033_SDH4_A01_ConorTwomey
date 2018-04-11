@@ -34,7 +34,6 @@ def split_identifier(language_project, per_language_or_project):
 
     return identifier
 
-
 def process_line(line, per_language_or_project):
     CORRECT_WORD_COUNT = 4
     LANGUAGE_PROJECT_INDEX = 0
@@ -62,7 +61,6 @@ def process_line(line, per_language_or_project):
 
     return result
 
-
 def remove_blanks(count_tuple):
     IDENTIFIER_INDEX = 0
     COUNT_INDEX = 1
@@ -77,7 +75,6 @@ def remove_blanks(count_tuple):
 
     return valid
 
-
 def back_to_line(count_tuple, totalCount):
     line = ''
 
@@ -90,7 +87,6 @@ def back_to_line(count_tuple, totalCount):
 
     return line
 
-
 def just_numbers(count_tuple):
     VIEW_COUNT_INDEX = 1
     count = 0
@@ -99,14 +95,12 @@ def just_numbers(count_tuple):
 
     return count
 
-
 def list_to_lines(tuple_list):
     line = ''
     for tupl in tuple_list:
         line += '(%s, %s)\t' % (tupl[0], tupl[1])
 
     return line
-
 
 def lines_to_tuples(lines):
     # Remove the brackets on either end
@@ -123,9 +117,7 @@ def lines_to_tuples(lines):
 
             return (article, count)
 
-        # ------------------------------------------
-
-
+# ------------------------------------------
 # FUNCTION my_main
 # ------------------------------------------
 def my_main(dataset_dir, o_file_dir, per_language_or_project):
