@@ -128,9 +128,7 @@ def my_main(dataset_dir, o_file_dir, per_language_or_project):
     inputRDD = sc.textFile("%s/*.txt" % dataset_dir)
 
     dividedRDD = inputRDD.map(lambda line: process_line(line, per_language_or_project))
-    dividedRDD = dividedRDD.map(list_to_lines)
-    dividedRDD = dividedRDD.map(lines_to_tuples)
-    dividedRDD = dividedRDD.filter(remove_blanks)
+    dividedRDD = dividedRDD.map(list_to_lines).map(lines_to_tuples).filter(remove_blanks)
     dividedRDD.persist()
 
     combinedRDD = dividedRDD.combineByKey(lambda count_value: count_value,
